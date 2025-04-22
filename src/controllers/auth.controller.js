@@ -55,12 +55,12 @@ class AuthController {
   async googleCallback(req, res) {
     try {
       const result = await authService.handleGoogleCallback(req.user.id);
-      res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/auth/callback?token=${result.token}`);
+      res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${result.token}`);
     } catch (error) {
       console.error('Google callback error:', error);
-      res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/auth/error`);
+      res.redirect(`${process.env.FRONTEND_URL}/auth/error`);
     }
   }
 }
 
-module.exports = new AuthController(); 
+module.exports = new AuthController();

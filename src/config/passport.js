@@ -7,13 +7,13 @@ const User = require('../models/user.model');
 // JWT Strategy
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET || 'your-secret-key'
+  secretOrKey: process.env.JWT_SECRET
 };
 
 passport.use(
   new JwtStrategy(jwtOptions, async (payload, done) => {
     try {
-      const user = await User.findById(payload.id);
+        const user = await User.findByPk(payload.id);
       if (user) {
         return done(null, user);
       }
@@ -30,12 +30,19 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: '/api/auth/google/callback',
+      callbackURL: process.env.GOOGLE_REDIRECT_URI,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        console.log('Google OAuth Profile:', profile);
+        console.log('Google Redirect URI:', process.env.GOOGLE_REDIRECT_URI);
+
         // Check if user already exists
-        let user = await User.findOne({ googleId: profile.id });
+        let user = await User.findOne({ 
+          where: { 
+            googleId: profile.id 
+          }
+        });
 
         if (!user) {
           // Create new user if doesn't exist
@@ -43,8 +50,13 @@ passport.use(
             googleId: profile.id,
             email: profile.emails[0].value,
             name: profile.displayName,
-            picture: profile.photos[0].value
+            picture: profile.photos[0].value,
+            emailVerified: true,
+            emailVerifiedAt: new Date()
           });
+          console.log('Created new user:', user.toJSON());
+        } else {
+          console.log('Found existing user:', user.toJSON());
         }
 
         return done(null, user);
@@ -53,4 +65,4 @@ passport.use(
       }
     }
   )
-); 
+);
