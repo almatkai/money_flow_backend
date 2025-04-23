@@ -34,9 +34,6 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        console.log('Google OAuth Profile:', profile);
-        console.log('Google Redirect URI:', process.env.GOOGLE_REDIRECT_URI);
-
         // Check if user already exists
         let user = await User.findOne({ 
           where: { 

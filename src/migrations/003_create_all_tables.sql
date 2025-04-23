@@ -54,6 +54,8 @@ CREATE TABLE wish (
     user_id INTEGER NOT NULL,
     name VARCHAR(255) NOT NULL,
     price DOUBLE PRECISION CHECK (price >= 0), -- Added check for non-negative price
+    description varchar(255),
+    link varchar(255), -- Updated to varchar(255)
     image TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -67,6 +69,7 @@ CREATE TABLE daily ( -- Assuming this is for daily expenses
     user_id INTEGER NOT NULL,
     name VARCHAR(255) NOT NULL,
     price DOUBLE PRECISION CHECK (price >= 0), -- Added check for non-negative price
+    description varchar(255)
     image TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
