@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const authService = require('../services/auth.service');
+const { logger } = require('sequelize/lib/utils/logger');
 
 class AuthController {
   async register(req, res) {
@@ -32,6 +33,7 @@ class AuthController {
 
   async login(req, res) {
     try {
+      console.debug('Login request body:', req.body);
       const { email, password } = req.body;
       const result = await authService.loginUser({ email, password });
       res.json(result);

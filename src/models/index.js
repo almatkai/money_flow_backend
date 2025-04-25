@@ -5,11 +5,13 @@ const sequelize = config.sequelize;
 
 // Import models
 const User = require('./user.model');
+const Profile = require('./profile.model');
 const VerificationToken = require('./verification-token.model');
 
 // Initialize models
 const models = {
   User: User.init(sequelize),
+  Profile: Profile.init(sequelize),
   VerificationToken: VerificationToken.init(sequelize),
 };
 

@@ -21,7 +21,7 @@ app.use(passport.initialize());
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/protected', protectedRoutes);
+app.use('/api/1.0', protectedRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

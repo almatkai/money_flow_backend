@@ -2,21 +2,24 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 
-// Middleware to require authentication
-const requireAuth = passport.authenticate('jwt', { session: false });
+// Custom middleware for short unauthorized message
+const requireAuth = (req, res, next) => {
+  passport.authenticate('jwt', { session: false }, (err, user) => {
+    if (err || !user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    req.user = user;
+    next();
+  })(req, res, next);
+};
+
+// User profile controller
+const userProfileController = require('../controllers/userprofile.controller');
 
 // Protected route example
-router.get('/profile', requireAuth, (req, res) => {
-  res.json({
-    message: 'You have access to this protected route',
-    user: {
-      id: req.user._id,
-      email: req.user.email,
-      name: req.user.name,
-      picture: req.user.picture
-    }
-  });
-});
+router.get('/profile', requireAuth, userProfileController.getProfile);
+
+router.put('/profile', requireAuth, userProfileController.updateProfile);
 
 // Another protected route example
 router.get('/dashboard', requireAuth, (req, res) => {
@@ -26,4 +29,4 @@ router.get('/dashboard', requireAuth, (req, res) => {
   });
 });
 
-module.exports = router; 
+module.exports = router;
