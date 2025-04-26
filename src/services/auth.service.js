@@ -125,7 +125,6 @@ class AuthService {
       const token = jwt.sign(
         { id: user.id },
         process.env.JWT_SECRET || 'your-secret-key',
-        { expiresIn: '1d' }
       );
 
       await transaction.commit();
@@ -201,8 +200,7 @@ class AuthService {
 
       const token = jwt.sign(
         { id: userId },
-        process.env.JWT_SECRET || 'your-secret-key',
-        { expiresIn: '1d' }
+        process.env.JWT_SECRET || 'your-secret-key'
       );
 
       await transaction.commit();

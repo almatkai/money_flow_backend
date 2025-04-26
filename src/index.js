@@ -13,10 +13,13 @@ require('./config/passport');
 
 const app = express();
 
+const logger = require('./middleware/logger.middleware');
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(logger);
 app.use(passport.initialize());
 
 // Routes
@@ -49,4 +52,4 @@ async function startServer() {
   }
 }
 
-startServer(); 
+startServer();
