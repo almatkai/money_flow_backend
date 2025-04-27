@@ -7,7 +7,7 @@ module.exports = function logger(req, res, next) {
     // now that routing has happened, req.baseUrl and req.route.path are populated
     const route = req.baseUrl + (req.route?.path || '');
     console.log(
-      `[${timestamp}] ${method} ${url} [${res.statusCode}] - req: ${req}`
+      `[${timestamp}] ${method} ${url} [${res.statusCode}] - IP: ${req.ip}`
     );
   });
 

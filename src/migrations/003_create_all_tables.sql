@@ -11,7 +11,6 @@ CREATE TABLE stocks (
     price INTEGER,
     ticker TEXT UNIQUE, -- Added UNIQUE constraint, assuming tickers are unique
     name TEXT,
-    quantity TEXT, -- Kept as TEXT per schema, consider INTEGER or NUMERIC if it represents a count
     created_date DATE DEFAULT CURRENT_DATE,
     updated_at DATE,
     last_price_update DATE
