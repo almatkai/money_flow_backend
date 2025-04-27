@@ -23,8 +23,24 @@ const authMiddleware = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    console.error('Auth middleware error:', error);
-    res.status(401).json({ message: 'Token is not valid' });
+    // expired token
+    if (error.name === 'TokenExpiredError') {
+      return res
+        .status(401)
+        .json({ message: translate('error.tokenExpired', 'Your session has expired.') });
+    }
+
+    // any other JWT error (invalid, malformed, etc)
+    if (error.name === 'JsonWebTokenError') {
+      return res
+        .status(401)
+        .json({ message: translate('error.tokenInvalid', 'Token is not valid.') });
+    }
+
+    // fallback
+    return res
+      .status(500)
+      .json({ message: translate('error.internal', 'Internal server error.') });
   }
 };
 

@@ -1,14 +1,14 @@
 module.exports = function logger(req, res, next) {
   const timestamp = new Date().toISOString();
-  const method = req.method;
-  const url = req.originalUrl;
-  const route = req.baseUrl + (req.route && req.route.path ? req.route.path : '');
+  const method    = req.method;
+  const url       = req.originalUrl;
 
-  // after response is finished, log status code
   res.on('finish', () => {
-      console.log(
-          `[${timestamp}] ${method} ${url} [${res.statusCode}] - router: ${route}`
-      );
+    // now that routing has happened, req.baseUrl and req.route.path are populated
+    const route = req.baseUrl + (req.route?.path || '');
+    console.log(
+      `[${timestamp}] ${method} ${url} [${res.statusCode}] - req: ${req}`
+    );
   });
 
   next();
