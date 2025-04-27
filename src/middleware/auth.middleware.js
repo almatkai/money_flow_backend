@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
+const i18next = require('../utils/i18');
 
 const authMiddleware = async (req, res, next) => {
   try {
@@ -23,25 +24,19 @@ const authMiddleware = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    // expired token
+    // Expired token
     if (error.name === 'TokenExpiredError') {
-      return res
-        .status(401)
-        .json({ message: translate('error.tokenExpired', 'Your session has expired.') });
+      return res.status(401).json({ message: i18next.t('error.tokenExpired') });
     }
 
-    // any other JWT error (invalid, malformed, etc)
+    // Any other JWT error (invalid, malformed, etc)
     if (error.name === 'JsonWebTokenError') {
-      return res
-        .status(401)
-        .json({ message: translate('error.tokenInvalid', 'Token is not valid.') });
+      return res.status(401).json({ message: i18next.t('error.tokenInvalid') });
     }
 
-    // fallback
-    return res
-      .status(500)
-      .json({ message: translate('error.internal', 'Internal server error.') });
+    // Fallback
+    return res.status(500).json({ message: i18next.t('error.internal') });
   }
 };
 
-module.exports = authMiddleware; 
+module.exports = authMiddleware;

@@ -1,31 +1,56 @@
 // src/controllers/daily.controller.js
+const { Daily, ExpenseCategory } = require('../models');
 
-const { Daily } = require('../models'); // Adjust import if model is named differently
-
-// Create a daily record
 async function createDaily(req, res) {
   try {
-    const { user_id, name, price, description, image, category } = req.body;
-    const daily = await Daily.create({ user_id, name, price, description, image, category });
-    res.status(201).json(daily);
+    const { user_id, name, price, description, image, category_id } = req.body;
+    
+    // Verify category exists
+    const category = await ExpenseCategory.findByPk(category_id);
+    if (!category) {
+      return res.status(400).json({ error: 'Invalid category_id' });
+    }
+
+    const daily = await Daily.create({ 
+      user_id, 
+      name, 
+      price, 
+      description, 
+      image, 
+      category_id 
+    });
+    
+    // Include category in response
+    const dailyWithCategory = await Daily.findByPk(daily.id, {
+      include: [{
+        model: ExpenseCategory,
+        attributes: ['label', 'value']
+      }]
+    });
+
+    res.status(201).json(dailyWithCategory);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 }
 
-// Get daily records (optionally by user_id)
 async function getDailies(req, res) {
   try {
     const { user_id } = req.query;
     const where = user_id ? { user_id } : {};
-    const dailies = await Daily.findAll({ where });
+    const dailies = await Daily.findAll({
+      where,
+      include: [{
+        model: ExpenseCategory,
+        attributes: ['label', 'value']
+      }]
+    });
     res.json(dailies);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 }
 
-// Delete a daily record by id
 async function deleteDaily(req, res) {
   try {
     const { id } = req.params;
@@ -40,17 +65,31 @@ async function deleteDaily(req, res) {
   }
 }
 
-// Update price and/or name of a daily record by id
 async function updateDaily(req, res) {
   try {
     const { id } = req.params;
-    const { price, name } = req.body;
+    const { price, name, category_id } = req.body;
+
+    // If category_id is being updated, verify it exists
+    if (category_id) {
+      const category = await ExpenseCategory.findByPk(category_id);
+      if (!category) {
+        return res.status(400).json({ error: 'Invalid category_id' });
+      }
+    }
+
     const [updated] = await Daily.update(
-      { price, name },
+      { price, name, category_id },
       { where: { id } }
     );
+
     if (updated) {
-      const updatedDaily = await Daily.findByPk(id);
+      const updatedDaily = await Daily.findByPk(id, {
+        include: [{
+          model: ExpenseCategory,
+          attributes: ['label', 'value']
+        }]
+      });
       res.json(updatedDaily);
     } else {
       res.status(404).json({ error: 'Daily record not found' });
